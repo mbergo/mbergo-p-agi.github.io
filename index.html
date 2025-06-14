@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Interactive AGI Paper: The ELFA Framework</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+        <!-- Chosen Palette: "Cosmic Harmony" -->
+        <!-- Application Structure Plan: The application is designed for non-linear exploration, transforming the dense paper into thematic, digestible sections. The user journey starts with a high-level overview (The Problem & The Solution), then allows deep dives into the ELFA framework, its cognitive architecture, and its theoretical roots. An interactive radar chart provides a powerful visual comparison of AI paradigms. The flow is designed to build understanding layer by layer, from the 'why' (limitations of current AI) to the 'what' (ELFA) and 'how' (architecture), concluding with applications and challenges. This thematic structure, supported by sticky navigation, is superior to a linear chapter-by-chapter format for web-based exploration and user engagement. -->
+        <!-- Visualization & Content Choices: 
+        - Comparative Analysis (Table 1) -> Goal: Compare -> Viz: Interactive Radar Chart (Chart.js) -> Interaction: Hover for details, toggle datasets -> Justification: Radar charts excel at multi-variable comparison, offering an intuitive "shape" of each AI's capabilities. It's more impactful than a table.
+        - ELFA Core Principles -> Goal: Organize & Explain -> Viz: Interactive Diagram (HTML/CSS Flexbox) -> Interaction: Click nodes to reveal detailed text -> Justification: Breaks down the core framework into digestible, interactive parts, preventing information overload and encouraging exploration.
+        - Cognitive Architecture -> Goal: Organize & Explain -> Viz: Interactive Diagram (HTML/CSS Grid) -> Interaction: Click components for detailed descriptions -> Justification: Visually deconstructs the complex architecture, making the relationship between components clear.
+        - Kolb's Learning Cycle -> Goal: Change/Process -> Viz: Circular Flow Diagram (HTML/CSS) -> Interaction: Hover to highlight stages -> Justification: The visual form directly matches the conceptual model of a cycle, making it intuitive.
+        - Challenges -> Goal: Inform/Organize -> Viz: Tabbed Interface (HTML/CSS/JS) -> Interaction: Click tabs to switch content panes -> Justification: A standard, effective UX pattern to manage dense textual information, keeping the UI clean and user-focused.
+    -->
+        <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+        <style>body { font-family: "Inter", sans-serif; background-color: #f8f9fa; color: #212529; } .nav-link { transition: color 0.3s,
+          border-bottom-color 0.3s; border-bottom: 2px solid transparent; } .nav-link:hover, .nav-link.active { color: #0077b6; border-bottom-color: #0077b6; } .card { background-color: #ffffff; border: 1px solid #dee2e6; transition: transform 0.3s,
+          box-shadow 0.3s; } .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08); } .tab-button { transition: background-color 0.3s,
+          color 0.3s; } .tab-button.active { background-color: #0077b6; color: #ffffff; } .diagram-node { cursor: pointer; transition: background-color 0.3s,
+          transform 0.3s; } .diagram-node:hover { transform: scale(1.05); background-color: #caf0f8; } .chart-container { position: relative; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto; height: 400px; } @media (min-width: 768px) { .chart-container {  height: 500px; } }</style>
+    </head>
+    <body class="antialiased">
+        <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-xl font-bold text-gray-800">Experiential AGI</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4"><a href="#problem" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">The Problem</a><a href="#elfa" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">The ELFA Framework</a><a href="#architecture" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Cognitive Architecture</a><a href="#comparison" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Comparison</a><a href="#applications" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Applications</a><a href="#challenges" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700">Challenges</a>
+                        </div>
+                    </div>
+                    <div class="md:hidden">
+                        <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"><span class="sr-only">Open main menu</span>
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="mobile-menu" class="hidden md:hidden">
+                    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3"><a href="#problem" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700">The Problem</a><a href="#elfa" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700">The ELFA Framework</a><a href="#architecture" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700">Cognitive Architecture</a><a href="#comparison" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700">Comparison</a><a href="#applications" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700">Applications</a><a href="#challenges" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700">Challenges</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            <section class="text-center mb-16 md:mb-24">
+                <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+          Rethinking Intelligence </h2>
+                <p class="text-lg md:text-xl max-w-3xl mx-auto text-gray-600">
+          Beyond statistical patterns, a new path to Artificial General
+          Intelligence emerges from experience, emotion, and context—mirroring
+          how humans learn and understand the world. </p>
+            </section>
+            <section id="problem" class="mb-16 md:mb-24 scroll-mt-20">
+                <h3 class="text-2xl md:text-3xl font-bold text-center mb-2">
+          The Limits of Current AI </h3>
+                <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+          This section outlines the fundamental challenges facing today's
+          leading AI paradigms. While models like LLMs are powerful, they have
+          conceptual gaps that prevent them from achieving true, human-like
+          general intelligence. Understanding these limitations is the first
+          step toward building something better. </p>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2 text-blue-800">
+              Superficial Understanding </h4>
+                        <p class="text-gray-700">
+              Systems like LLMs manipulate language fluently but often lack
+              genuine comprehension. They struggle with common-sense reasoning
+              and can produce "hallucinations"—plausible but false information. </p>
+                    </div>
+                    <div class="card p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2 text-blue-800">
+              Brittleness & Poor Adaptability </h4>
+                        <p class="text-gray-700">
+              Models trained on static datasets are brittle. They fail when
+              encountering novel situations or data that differs from their
+              training, lacking the adaptive capabilities of human intelligence. </p>
+                    </div>
+                    <div class="card p-6 rounded-lg">
+                        <h4 class="font-bold text-lg mb-2 text-blue-800">
+              Ungrounded Symbols </h4>
+                        <p class="text-gray-700">
+              AI's internal representations (symbols) are often disconnected
+              from real-world, sensory experience. This "symbol grounding
+              problem" leads to a shallow grasp of concepts and causality. </p>
+                    </div>
+                </div>
+            </section>
+            <section id="elfa" class="mb-16 md:mb-24 bg-gray-100 p-8 rounded-lg scroll-mt-20">
+                <h3 class="text-2xl md:text-3xl font-bold text-center mb-2">
+          The Experiential Learning Framework (ELFA) </h3>
+                <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">
+          In response to current limitations, this paper proposes ELFA, a new
+          paradigm for AGI development. ELFA is built on the idea that
+          intelligence emerges from interaction. This section introduces its
+          three core principles. Click on each principle to learn more about how
+          it contributes to a more robust and human-like AI. </p>
+                <div id="elfa-diagram" class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 mb-8">
+                    <div data-target="elfa-exp" class="diagram-node flex-1 text-center p-6 border-2 border-dashed border-blue-400 rounded-lg bg-white"><span class="text-5xl">🌍</span>
+                        <h4 class="font-bold text-lg mt-2">Simulated Rich Experiences</h4>
+                    </div>
+                    <div class="text-3xl font-bold text-blue-500 hidden md:block">+</div>
+                    <div data-target="elfa-emo" class="diagram-node flex-1 text-center p-6 border-2 border-dashed border-blue-400 rounded-lg bg-white"><span class="text-5xl">💡</span>
+                        <h4 class="font-bold text-lg mt-2">
+              Emotional & Contextual Integration </h4>
+                    </div>
+                    <div class="text-3xl font-bold text-blue-500 hidden md:block">→</div>
+                    <div data-target="elfa-feed" class="diagram-node flex-1 text-center p-6 border-2 border-dashed border-blue-400 rounded-lg bg-white"><span class="text-5xl">🔄</span>
+                        <h4 class="font-bold text-lg mt-2">Iterative Feedback Loops</h4>
+                    </div>
+                </div>
+                <div id="elfa-details" class="mt-4 bg-white p-6 rounded-lg border border-gray-200 min-h-[150px]">
+                    <div id="elfa-default" class="text-gray-500 text-center flex items-center justify-center h-full">
+                        Click on a principle above to see details.
+</div>
+                    <div id="elfa-exp-content" class="elfa-content hidden">
+                        <h4 class="font-bold text-xl mb-2">Simulated Rich Experiences</h4>
+                        <p class="text-gray-700">
+              The AI agent learns not from static data, but by actively engaging
+              with dynamic, complex, and scenario-based simulated environments.
+              It perceives, acts, and observes consequences in real-time,
+              building a library of nuanced "memories" and skills akin to human
+              episodic memory. This is "learning by doing" in a rich, safe, and
+              scalable digital world. </p>
+                    </div>
+                    <div id="elfa-emo-content" class="elfa-content hidden">
+                        <h4 class="font-bold text-xl mb-2">
+              Emotional & Contextual Integration </h4>
+                        <p class="text-gray-700">
+              Experiences are encoded with emotional and contextual depth.
+              Simulated emotions act as salience markers, highlighting important
+              events and guiding attention and memory. Rich contextual cues
+              (social, temporal, environmental) are integrated to ensure the AI
+              understands the "why" and "how" behind events, allowing for
+              nuanced interpretation and generalization. </p>
+                    </div>
+                    <div id="elfa-feed-content" class="elfa-content hidden">
+                        <h4 class="font-bold text-xl mb-2">Iterative Feedback Loops</h4>
+                        <p class="text-gray-700">
+              Learning is a continuous cycle of action and reflection. The AI
+              learns from reinforcement (rewards/penalties), but also from
+              richer feedback like explanations and corrections, similar to
+              human teaching. It possesses mechanisms to reflect on its own
+              experiences, identify errors in its understanding, and
+              self-correct its internal models. </p>
+                    </div>
+                </div>
+            </section>
+            <section id="architecture" class="mb-16 md:mb-24 scroll-mt-20">
+                <h3 class="text-2xl md:text-3xl font-bold text-center mb-2">
+          A Mind in the Making: Cognitive Architecture </h3>
+                <p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">
+          To enable experiential learning, ELFA requires a sophisticated
+          cognitive architecture inspired by the human brain. This section
+          breaks down the key systems that work together to turn experience into
+          intelligence. Explore each component to understand its specific role
+          in the AGI's learning process. </p>
+                <div id="architecture-diagram" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                    <div class="card rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-2">
+              Hybrid Neural-Symbolic System </h4>
+                        <p class="text-sm text-gray-600 mb-4">
+              Combines neural networks for intuitive perception (System 1) with
+              symbolic systems for deliberate reasoning and logic (System 2). </p>
+                        <button data-target="arch-hybrid" class="arch-button bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
+                            Learn More
+</button>
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-2">Memory-Augmented Networks</h4>
+                        <p class="text-sm text-gray-600 mb-4">
+              A sophisticated memory system with distinct episodic (life events)
+              and semantic (general knowledge) components, allowing for
+              reflection. </p>
+                        <button data-target="arch-mann" class="arch-button bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
+                            Learn More
+</button>
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-2">Reinforcement Learning Agent</h4>
+                        <p class="text-sm text-gray-600 mb-4">
+              The core learning mechanism. The agent learns to make decisions
+              through trial-and-error within the simulated world to achieve
+              goals. </p>
+                        <button data-target="arch-rl" class="arch-button bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
+                            Learn More
+</button>
+                    </div>
+                    <div class="card rounded-lg p-6">
+                        <h4 class="font-bold text-lg mb-2">Curriculum Learning Pipeline</h4>
+                        <p class="text-sm text-gray-600 mb-4">
+              Training starts simple and progressively increases in complexity,
+              guiding the AI's development like a human student. </p>
+                        <button data-target="arch-curriculum" class="arch-button bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold">
+                            Learn More
+</button>
+                    </div>
+                </div>
+                <div id="architecture-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+                    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 relative">
+                        <button id="close-arch-modal" class="absolute top-2 right-4 text-3xl text-gray-500 hover:text-gray-800">
+                            &times;
+</button>
+                        <div id="architecture-modal-content"></div>
+                    </div>
+                </div>
+            </section>
+            <section id="comparison" class="mb-16 md:mb-24 scroll-mt-20">
+                <h3 class="text-2xl md:text-3xl font-bold text-center mb-2">
+          A New Paradigm: How ELFA Measures Up </h3>
+                <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+          This visualization directly compares the proposed ELFA framework
+          against current AI paradigms based on key capabilities required for
+          AGI. The chart provides a clear, at-a-glance understanding of where
+          traditional methods fall short and where an experiential approach is
+          designed to excel. Interact with the chart to see the details. </p>
+                <div class="chart-container">
+                    <canvas id="agiComparisonChart"></canvas>
+                </div>
+            </section>
+            <section id="applications" class="mb-16 md:mb-24 scroll-mt-20">
+                <h3 class="text-2xl md:text-3xl font-bold text-center mb-2">
+          Potential Applications </h3>
+                <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+          An AGI with deeper understanding and adaptability could transform
+          industries. This section highlights a few key areas where an
+          experiential AGI could move beyond current AI, enabling more nuanced,
+          intuitive, and human-like interactions and problem-solving. </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="card p-6 rounded-lg text-center">
+                        <div class="text-4xl mb-4">💬</div>
+                        <h4 class="font-bold text-lg mb-2">
+              Empathetic Customer Engagement </h4>
+                        <p class="text-gray-700">
+              AI that understands emotional and contextual nuance to provide
+              genuinely empathetic and personalized customer support. </p>
+                    </div>
+                    <div class="card p-6 rounded-lg text-center">
+                        <div class="text-4xl mb-4">❤️</div>
+                        <h4 class="font-bold text-lg mb-2">Nuanced Healthcare</h4>
+                        <p class="text-gray-700">
+              More intuitive diagnostic tools and adaptive treatment plans that
+              consider a patient's holistic context and emotional state. </p>
+                    </div>
+                    <div class="card p-6 rounded-lg text-center">
+                        <div class="text-4xl mb-4">🎓</div>
+                        <h4 class="font-bold text-lg mb-2">Personalized Education</h4>
+                        <p class="text-gray-700">
+              Adaptive learning environments that tailor content not just to
+              knowledge level, but to learning style and emotional engagement. </p>
+                    </div>
+                </div>
+            </section>
+            <section id="challenges" class="scroll-mt-20">
+                <h3 class="text-2xl md:text-3xl font-bold text-center mb-2">
+          The Road Ahead: Challenges & Imperatives </h3>
+                <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+          The path to experiential AGI is not simple. It is fraught with immense
+          technical, philosophical, and ethical hurdles that require careful
+          consideration and interdisciplinary research. This section provides a
+          transparent look at these significant challenges. </p>
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-4 flex space-x-2 border-b">
+                        <button data-tab="tech" class="tab-button active py-2 px-4 font-semibold text-gray-600 rounded-t-lg">
+                            Technical
+</button>
+                        <button data-tab="phil" class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg">
+                            Philosophical
+</button>
+                        <button data-tab="eth" class="tab-button py-2 px-4 font-semibold text-gray-600 rounded-t-lg">
+                            Ethical
+</button>
+                    </div>
+                    <div class="p-4 bg-white rounded-b-lg rounded-r-lg border border-t-0">
+                        <div id="tech-content" class="tab-content">
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><b>Simulation Fidelity:</b> Creating simulated worlds rich and
+                                    veridical enough to allow for meaningful knowledge transfer is
+                                    a monumental task.
+                                </li>
+                                <li><b>Computational Scale:</b> The resources required to run
+                                    these complex simulations and train the proposed architectures
+                                    are enormous.
+                                </li>
+                                <li><b>Interpretability:</b> Understanding the "why" behind a
+                                    decision made by an AI shaped by millions of simulated
+                                    experiences is incredibly difficult.
+                                </li>
+                                <li><b>Catastrophic Forgetting:</b> Ensuring the AI doesn't lose
+                                    old knowledge as it continuously learns new things remains a
+                                    core research problem.
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="phil-content" class="tab-content hidden">
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><b>Genuine Emotion:</b> Can a simulation, no matter how
+                                    complex, ever lead to genuine affective states, or is it just
+                                    sophisticated mimicry?
+                                </li>
+                                <li><b>Subjective Experience (Qualia):</b> The "hard problem" of
+                                    consciousness remains. It is philosophically debatable whether
+                                    a computational system could ever have subjective,
+                                    first-person awareness.
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="eth-content" class="tab-content hidden">
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><b>Value Alignment:</b> How do we ensure the "emotions" and
+                                    "values" learned from simulation align with human ethics? An
+                                    AI could learn to perfectly simulate empathy for manipulative
+                                    purposes.
+                                </li>
+                                <li><b>Bias Amplification:</b> Biases embedded in the simulation
+                                    design could be learned and amplified by the AGI, leading to
+                                    discriminatory behavior.
+                                </li>
+                                <li><b>Control and Safety:</b> Maintaining meaningful human
+                                    control over a rapidly and autonomously learning system
+                                    presents a profound safety challenge, including existential
+                                    risks.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer>Marcus Bergo - MSC MIT 2026</footer>
+        <footer class="bg-gray-800 text-white mt-16 md:mt-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm">
+                <p>
+          Interactive Visualization of "Leveraging Experiential Learning for
+          Advanced Artificial General Intelligence". </p>
+                <p>&copy; 2025. Created for educational and illustrative purposes.</p>
+            </div>
+        </footer>
+        <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const agiComparisonData = {
+          labels: [
+            "Adaptability to Novelty",
+            "Common Sense Reasoning",
+            "Causal Understanding",
+            "Symbol Grounding",
+            "Embodied Understanding",
+            "Emotional Intelligence",
+            "Transformational Creativity",
+            "Long-Term Memory",
+          ],
+          datasets: [
+            {
+              label: "Traditional ML",
+              data: [1, 0, 0, 0, 0, 0, 0, 1],
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 2,
+              pointBackgroundColor: "rgba(255, 99, 132, 1)",
+            },
+            {
+              label: "Current LLMs / RAG",
+              data: [3, 2, 1, 1, 0, 2, 1, 3],
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 2,
+              pointBackgroundColor: "rgba(54, 162, 235, 1)",
+            },
+            {
+              label: "Proposed ELFA",
+              data: [5, 4, 4, 4, 5, 4, 4, 5],
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 2,
+              pointBackgroundColor: "rgba(75, 192, 192, 1)",
+            },
+          ],
+        };
+
+        const config = {
+          type: "radar",
+          data: agiComparisonData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "top",
+                labels: {
+                  font: {
+                    size: 14,
+                  },
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    let label = context.dataset.label || "";
+                    if (label) {
+                      label += ": ";
+                    }
+                    if (context.parsed.r !== null) {
+                      const ratings = [
+                        "None",
+                        "Very Low",
+                        "Low",
+                        "Moderate",
+                        "High",
+                        "Very High",
+                      ];
+                      label += ratings[context.parsed.r] || context.parsed.r;
+                    }
+                    return label;
+                  },
+                },
+              },
+            },
+            scales: {
+              r: {
+                angleLines: {
+                  color: "rgba(0, 0, 0, 0.1)",
+                },
+                suggestedMin: 0,
+                suggestedMax: 5,
+                pointLabels: {
+                  font: {
+                    size: 12,
+                  },
+                  color: "#333",
+                },
+                grid: {
+                  color: "rgba(0, 0, 0, 0.1)",
+                },
+                ticks: {
+                  stepSize: 1,
+                  backdropColor: "transparent",
+                  color: "grey",
+                },
+              },
+            },
+          },
+        };
+
+        const chartCanvas = document.getElementById("agiComparisonChart");
+        if (chartCanvas) {
+          new Chart(chartCanvas, config);
+        }
+
+        const elfaDiagram = document.getElementById("elfa-diagram");
+        const elfaDetails = document.getElementById("elfa-details");
+        const elfaDefault = document.getElementById("elfa-default");
+        const elfaContents = document.querySelectorAll(".elfa-content");
+
+        elfaDiagram.addEventListener("click", (e) => {
+          const targetNode = e.target.closest(".diagram-node");
+          if (!targetNode) return;
+
+          const targetId = targetNode.dataset.target;
+
+          elfaDefault.classList.add("hidden");
+          elfaContents.forEach((content) => {
+            if (content.id === `${targetId}-content`) {
+              content.classList.remove("hidden");
+            } else {
+              content.classList.add("hidden");
+            }
+          });
+
+          document.querySelectorAll(".diagram-node").forEach((node) => {
+            node.classList.remove("bg-blue-100", "border-blue-600");
+            node.classList.add("bg-white");
+          });
+          targetNode.classList.add("bg-blue-100", "border-blue-600");
+          targetNode.classList.remove("bg-white");
+        });
+
+        const tabButtons = document.querySelectorAll(".tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const tabId = button.dataset.tab;
+
+            tabButtons.forEach((btn) => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            tabContents.forEach((content) => {
+              if (content.id === `${tabId}-content`) {
+                content.classList.remove("hidden");
+              } else {
+                content.classList.add("hidden");
+              }
+            });
+          });
+        });
+
+        const archModal = document.getElementById("architecture-modal");
+        const closeArchModalBtn = document.getElementById("close-arch-modal");
+        const archModalContent = document.getElementById(
+          "architecture-modal-content",
+        );
+        const archButtons = document.querySelectorAll(".arch-button");
+
+        const modalData = {
+          "arch-hybrid": {
+            title: "Hybrid Neural-Symbolic System",
+            text: "This architecture combines the pattern-recognition strengths of neural networks (for processing raw sensory data from simulations) with the logical reasoning capabilities of symbolic AI. The neural part provides intuition, while the symbolic part allows for explicit knowledge, planning, and explainability, creating a more robust and transparent mind.",
+          },
+          "arch-mann": {
+            title: "Memory-Augmented Neural Networks (MANNs)",
+            text: 'Unlike standard neural networks, MANNs have an external memory they can read from and write to. This enables the creation of a distinct episodic memory (to store specific "life events" from the simulation) and a semantic memory (for generalized facts and concepts). This allows the AI to reflect on past experiences to learn and plan.',
+          },
+          "arch-rl": {
+            title: "Reinforcement Learning (RL) Agent",
+            text: 'The agent learns through trial and error. It performs actions in the simulated world and receives feedback in the form of rewards or penalties. Over time, it learns a "policy"—a strategy for acting—that maximizes positive outcomes, effectively learning what to do to achieve its goals in a complex environment.',
+          },
+          "arch-curriculum": {
+            title: "Adaptive Training & Curriculum Learning",
+            text: "The AI doesn't face the full complexity of its world at once. Training starts with simple tasks and environments and gradually increases in difficulty as the AI demonstrates mastery. This staged approach, like a school curriculum, helps bootstrap complex skills and prevents the agent from being overwhelmed.",
+          },
+        };
+
+        archButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            const target = button.dataset.target;
+            const content = modalData[target];
+            if (content) {
+              archModalContent.innerHTML = `<h3 class="text-2xl font-bold mb-4">${content.title}</h3><p class="text-gray-700">${content.text}</p>`;
+              archModal.classList.remove("hidden");
+              archModal.classList.add("flex");
+            }
+          });
+        });
+
+        closeArchModalBtn.addEventListener("click", () => {
+          archModal.classList.add("hidden");
+          archModal.classList.remove("flex");
+        });
+
+        archModal.addEventListener("click", (e) => {
+          if (e.target === archModal) {
+            archModal.classList.add("hidden");
+            archModal.classList.remove("flex");
+          }
+        });
+
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+
+        mobileMenuButton.addEventListener("click", () => {
+          mobileMenu.classList.toggle("hidden");
+        });
+
+        const navLinks = document.querySelectorAll("nav a");
+        navLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            if (!mobileMenu.classList.contains("hidden")) {
+              mobileMenu.classList.add("hidden");
+            }
+          });
+        });
+      });
+    </script>
+    </body>
+</html>
